@@ -1,0 +1,31 @@
+%Eric Zacharia
+%Aircraft Performance and Dynamics
+%Homework 1 - 2 
+%Due Spetember 16, 2015
+
+clear all
+close all
+clc
+
+hGSL      = 0;                                        % Altitude sea level
+hG        = linspace(0,50000);                        % Altitude
+R         = 1716;                                     % ft^2/(s^2*R)
+g         = 32.2;                                     % ft/s^2
+TSL       = 518.69;                                   % Rankine
+pSL       = 2116.2;                                   % lbs/ft^2
+p         = pSL.*exp((-g./(R.*TSL)).*(hG - hGSL));    % lbs/ft^2 
+rhoSL     = 0.002377;                                 % slug/ft^3
+rho       = rhoSL.*exp((-g./(R.*TSL)).*(hG - hGSL));  % slug/ft^3
+gamma     = 1.4;                                      % - 
+Vinf      = 421.952464;                               % ft/s (250 kts)
+dVp       = -11.814669;                               % ft/s (-7  kts)
+p0        = p + 0.5*rho*Vinf.^2;                      % total pressure  
+Vc        = sqrt( ((2.*gamma.*pSL)./(rhoSL.*(gamma-1))).*(((p0-p)./...
+            pSL+1).^((gamma-1)./gamma)-1)); % Calibrated Airspeed (ft/s)
+Vi        = Vc - dVp;                       % Indicated Airspeed  (ft/s)
+
+figure(1)
+plot(Vi,hG,'r-^')
+xlabel('Indicated Velocity (ft/s)')
+ylabel('Altitude (ft)')
+title('Indicated Airspeed vs. Altitude')
