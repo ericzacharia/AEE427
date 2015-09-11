@@ -1,0 +1,59 @@
+%Eric Zacharia
+%Aircraft Performance and Dynamics
+%Homework 1 - 3 
+%Due Spetember 16, 2015
+
+clear all
+close all
+clc
+
+CD0          = 0.032;    % zero-lift drag coefficient
+AR           = 6.5;      % aspect ratio
+e            = 0.88;     % efficiency factor
+MaxThrustSL  = 9060;     % lbs (each engine (x2))
+pSL          = 2116.2;   % lb/ft^2
+TSL          = 518.69;   % R
+rhoSL        = 0.002377; % slug/ft^3
+S            = 506;      % ft^2
+W            = 22800;    % lbs
+dVp          = 11.8147;  % ft/s (7 knots)
+
+CLMax        = 2.1;      
+
+Vinf         = sqrt(W./(0.5*rhoSL.*CLMax.*S)); % ft/sec 
+Vinf         = linspace(Vinf,400);             % ft/sec 
+CL           = W./(0.5*rhoSL.*Vinf.^2.*S);
+CD           = CD0 + CL.^2/(pi.*e.*AR);
+
+
+figure(1)
+plot(CD,CL)
+xlabel('CD')
+ylabel('CL')
+title('Drag Polar for A-10')
+
+% KSYR 091454Z 23011KT 10SM SCT100 BKN200 31/18 A2983 RMK AO2 SLP095
+% BKN V SCT T03060183 58005
+% Winds from the WSW (230 degrees from North)
+% Wind speed at 11 knots or 18.5659 ft/s
+% Visibility at 10 Statute Miles or 10 Miles or 52800 feet
+% Pressure (altimeter) 29.83 inches Hg or 101004.38 Pa or 2109.52 lb/ft^2
+% Scattered Clouds at 10000 feet Above Ground Level
+% Broken Clouds at 20000 feet Above Ground Level
+
+gamma        = 1.4;      % - 
+hG           = 400;      % ft
+p400         = 2085.88;  % lb/ft^2
+T400         = 517.26;   % R
+rho400       = 0.00235;  % slug/ft^3
+V0           = sqrt((2.*W)./(rhoSL.*S.*CL)) % Stall Velocity (ft/s)
+p0           = p400 + 0.5*rho400*V0.^2; % total pressure at 400 feet at stall velocity   
+Vc           = sqrt( ((2.*gamma.*pSL)./(rhoSL.*(gamma-1))).*(((p0-p400)...
+               ./pSL+1).^((gamma-1)./gamma)-1)); % Calibrated Airspeed (ft/s)
+
+Vi           = Vc - dVp                     % Indicated Airspeed (ft/s)
+
+
+
+
+
