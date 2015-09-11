@@ -1,0 +1,35 @@
+%Eric Zacharia
+%Aircraft Performance and Dynamics
+%Homework 1 - 1 
+%Due Spetember 16, 2015
+
+clear all
+close all
+clc
+
+hGTropo   = linspace(0      ,32808.4,51);  % ft (0 Altitude   - Troposphere )
+hGStrato  = linspace(32808.4,164042 ,51);  % ft (Troposphere  - Stratosphere)
+hGMeso    = linspace(164042 ,262467 ,51);  % ft (Stratosphere - Mesosphere  )
+hGThermo  = linspace(262467 ,500000 ,51);  % ft (Mesosphere   - Thermosphere)
+
+hSL       = 0;                             % Altitude at Sea Level
+R         = 1716;                          % ft^2/(s^2*R)
+pSL       = 2116.2;                        % lb/ft^2
+TSL       = 518.69;                        % R
+rhoSL     = 0.002377;                      % slug/ft^3
+g         = 32.2;                          % ft/s^2
+
+rhoTropo  = rhoSL.*exp((-g./(R.*TSL)).*(hGTropo -hSL)); % Slugs/ft^3 ******* Can I Use TSL? *************************
+rhoStrato = rhoSL.*exp((-g./(R.*TSL)).*(hGStrato-hSL)); % Slugs/ft^3
+rhoMeso   = rhoSL.*exp((-g./(R.*TSL)).*(hGMeso  -hSL)); % Slugs/ft^3
+rhoThermo = rhoSL.*exp((-g./(R.*TSL)).*(hGThermo-hSL)); % Slugs/ft^3
+
+
+figure(1)
+plot(rhoTropo,hGTropo,'yo-',rhoStrato,hGStrato,'g^-',rhoMeso,hGMeso,'c*-',...
+    rhoThermo,hGThermo,'bo-')
+xlabel('Density (slug/ft^3)')
+ylabel('Altitude (ft)')
+title('Density Standard Atmosphere')
+legend('Troposphere','Stratosphere','Mesosphere','Thermosphere +')
+axis([-.2E-3 2.5E-3 0 5E5])
