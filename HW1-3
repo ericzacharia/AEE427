@@ -46,12 +46,15 @@ hG           = 400;      % ft
 p400         = 2085.88;  % lb/ft^2
 T400         = 517.26;   % R
 rho400       = 0.00235;  % slug/ft^3
-V0           = sqrt((2.*W)./(rhoSL.*S.*CL)) % Stall Velocity (ft/s)
-p0           = p400 + 0.5*rho400*V0.^2; % total pressure at 400 feet at stall velocity   
-Vc           = sqrt( ((2.*gamma.*pSL)./(rhoSL.*(gamma-1))).*(((p0-p400)...
-               ./pSL+1).^((gamma-1)./gamma)-1)); % Calibrated Airspeed (ft/s)
+Vstall       = sqrt((2.*W)./(rho400.*S.*CLMax)) % Stall Velocity (ft/s)
+p0400        = p400 + 0.5*rho400*Vstall.^2; % Total p at 400 ft at stall V  
+Vc           = sqrt( ((2.*gamma.*pSL)./(rhoSL.*(gamma-1))).*(((p0400-p400)...
+             ./pSL+1).^((gamma-1)./gamma)-1)); % Calibrated Airspeed (ft/s)
 
 Vi           = Vc - dVp                     % Indicated Airspeed (ft/s)
+
+
+
 
 
 
