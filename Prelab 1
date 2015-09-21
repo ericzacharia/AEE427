@@ -1,0 +1,23 @@
+% Eric Zacharia
+% Pre-Lab 1 (SLUF) 
+% Due September 9, 2015
+% Altitide at 5,000 Feet
+
+Vinf = linspace(57,211,100); %ft/s
+W    = 2000; %lbs
+rho  = 0.002377*0.8617 %slug/ft^3
+S    = 174; %ft^2
+CD0  = 0.0341;
+e    = 0.77;
+AR   = 7.52;
+
+CL   = W./( 0.5 .* rho .* Vinf.^2 .* S);
+CD   = CD0 + CL.^2./(pi*e*AR);
+CL_CD= CL./CD;
+TR   = W./CL_CD;
+
+figure(1)
+plot(Vinf,TR)
+xlabel('Velocity')
+ylabel('Thrust')
+title('Velocity Vs. Thrust for Cessna
