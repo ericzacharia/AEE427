@@ -1,0 +1,53 @@
+%Amanda Walkowicz, Ben Heyman, Eric Zacharia, Aaron Peters
+%Professor Green
+%AEE 427
+%Lab 1
+
+close all
+clear all
+clc
+
+%%
+%Data for lab 1%
+
+a=load('Datalab1copy.txt');
+%VData Variables from Lab%
+
+etime=a(:,1);        %Elapsed Time
+ttime=a(:,2);        %Timer Time
+loctime=a(:,3);      %Local Time
+ztime=a(:,4);        %Zulu Time
+vtruk=a(:,6);        %True Velocity (knots)
+vindk=a(:,7);        %Indicated velocity (knots)
+vtrum=a(:,8);        %True Velocity (mph)
+vindm=a(:,9);        %Indicated velocity (mph)
+ROC=a(:,10);         %rate of climb in ft/min
+TR=a(:,11);          %turn rate
+vtotk=a(:,12);       %Total Velocity (knots)
+vtotm=a(:,13);       %Total Velocity (mph)
+atmp=a(:,14);        %Atmospheric pressure (HG)
+atmtemp=a(:,15);     %Atmospheric temperature (celcius)
+density=a(:,16);     %Density
+Q=a(:,17);           %pounds per square foot
+A=a(:,18);
+altsl=a(:,24);       %Altitude at sealevel
+altg=a(:,25);        %Altitude at ground level
+altind=a(:,26);      %Indicated Altitude
+thrust=a(:,30);      %Thrust (lbs)
+
+ew=1340;             %Empty weight (lbs)
+pw=421;              %Payload weight (lbs)
+fw=257;              %fuel weight (lbs)
+tw=2018;             %Total weight (lbs)
+
+%%
+plot(vtotm(1000:6000),thrust(1000:6000))
+
+
+
+
+
+
+
+
+
