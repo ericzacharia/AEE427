@@ -313,7 +313,7 @@ ylabel('Power (lb*m/s)')
 title('Velocity Vs. Power ---- 30000 to 35000 feet')
 legend('Power Required','Power Available')
 
-%% Service and Absolute Ceilings
+% Service and Absolute Ceilings
 hGser     = linspace(35968,35968,50);              %ft
 Tser      = TSL + a.*(hGser);                      %Rankine
 pser      = pSL.*exp((-g./(R.*Tser)).*(hGser));    %lbs/ft^2 
