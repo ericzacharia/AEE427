@@ -1,0 +1,376 @@
+%Eric Zacharia
+%AEE427 - HW 2 - 2
+%Due September 30, 2015
+clear all
+close all
+clc
+TopRight = [880   385   560   420];
+set(0, 'DefaultFigurePosition', TopRight)
+
+Vinf      = linspace(0,750,50);    %ft/s  
+R         = 1716;                  %ft^2/(s^2*R)
+pSL       = 2116.2;                %lb/ft^2
+TSL       = 518.69;                %R
+rhoSL     = 0.002377;              %slug/ft^3
+g         = 32.2;                  %ft/s^2
+CD0       = 0.032;                 %-
+AR        = 6.5;                   %- 
+TMaxSL    = 9060;                  %lb (x2 engines)
+S         = 506;                   %ft^2
+e         = 0.77;                  %-
+W         = 22800;                 %lb
+CLMax     = 2.1;                   %-
+dVp       = 7;                     %kts
+dT        = TSL-389.988;           %Rankine
+a         = -dT/(36097);           %Lapse Rate
+gamma     = 1.4; 
+
+hG0k      = linspace(0,0,50);                     %ft
+T0k       = TSL + a.*(hG0k);                      %Rankine
+p0k       = pSL.*exp((-g./(R.*T0k)).*(hG0k));     %lbs/ft^2 
+rho0k     = p0k./(R.*T0k);                        %slug/ft^3
+CL0k      = W./(0.5.*rho0k.*Vinf.^2.*S);          %- 
+CD0k      = CD0 + CL0k.^2./(pi*e*AR);             %-
+CL_CD0k   = CL0k./CD0k;                           %-
+T_R0k     = W./CL_CD0k;                           %lb
+P_R0k     = T_R0k.*Vinf;                          %lb*m/s
+T_A0k     = TMaxSL.*(rho0k/rhoSL);                %lb
+P_A0k     = T_A0k.*Vinf;                          %lb*m/s
+dP0k      = P_A0k-P_R0k;
+MaxdP0k   = max(dP0k);
+MaxROC0k  = MaxdP0k/W                             %Max Rate of Climb
+p00k      = p0k + 0.5.*rho0k.*Vinf.^2;            %Total Pressure
+Vc0k      = sqrt( ((2.*gamma.*p0k)./(rho0k.*(gamma-1))).*(((p00k-p0k)...
+            ./p0k+1).^((gamma-1)./gamma)-1));     %True Airspeed (ft/s)
+Vi0k      = Vc0k - dVp;                           %Indicated Airspeed (ft/s)
+VMax0k    = 682                                   %Max V from curve (ft/s)
+ViMax0k   = max(Vi0k)                             %Max Vi (ft/s)
+
+figure(99)
+hold on
+plot(Vinf,T_R0k,'*-',Vinf,T_A0k,'^-')
+plot(681.52,9062.14,'ro','markersize',18)
+xlabel('Velocity (ft/s)')
+ylabel('Thrust (lbs)')
+title('Velocity Vs. Thrust ---- At Sea Level only')
+legend('Thrust Required','Thrust Available','Max Velocity = 682ft/s')
+axis([ 0 800 0 2.5E4 ])
+figure(100)
+hold on
+plot(Vinf,P_R0k,'*-',Vinf,P_A0k,'^-')
+plot(681.52,6.1765E6,'ro','markersize',18)
+xlabel('Velocity (ft/s)')
+ylabel('Power (lb*m/s)')
+title('Velocity Vs. Power ---- At Sea Level only')
+legend('Power Required','Power Available','Max Velocity = 682ft/s')
+
+
+hG5k      = linspace(0,5000,50);                  %ft
+T5k       = TSL + a.*(hG5k);                      %Rankine
+p5k       = pSL.*exp((-g./(R.*T5k)).*(hG5k));     %lbs/ft^2 
+rho5k     = p5k./(R.*T5k);                        %slug/ft^3
+CL5k      = W./(0.5.*rho5k.*Vinf.^2.*S);          %- 
+CD5k      = CD0 + CL5k.^2./(pi*e*AR);             %-
+CL_CD5k   = CL5k./CD5k;                           %-
+T_R5k     = W./CL_CD5k;                           %lb
+P_R5k     = T_R5k.*Vinf;                          %lb*m/s
+T_A5k     = TMaxSL.*(rho5k/rhoSL);                %lb
+P_A5k     = T_A5k.*Vinf;                          %lb*m/s
+dP5k      = P_A5k-P_R5k;
+MaxdP5k   = max(dP5k);
+MaxROC5k  = MaxdP5k/W                             %Max Rate of Climb
+
+figure(1)
+hold on
+plot(Vinf,T_R5k,'*-',Vinf,T_A5k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Thrust (lbs)')
+title('Velocity Vs. Thrust ---- 0 to 5000 feet')
+legend('Thrust Required','Thrust Available')
+axis([ 0 800 0 2.5E4 ])
+figure(2)
+hold on
+plot(Vinf,P_R5k,'*-',Vinf,P_A5k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Power (lb*m/s)')
+title('Velocity Vs. Power ---- 0 to 5000 feet')
+legend('Power Required','Power Available')
+
+hG10k     = linspace(5000,10000,50);               %ft
+T10k      = TSL + a.*(hG10k);                      %Rankine
+p10k      = pSL.*exp((-g./(R.*T10k)).*(hG10k));    %lbs/ft^2 
+rho10k    = p10k./(R.*T10k);                       %slug/ft^3
+CL10k     = W./(0.5.*rho10k.*Vinf.^2.*S);          %- 
+CD10k     = CD0 + CL10k.^2./(pi*e*AR);             %-
+CL_CD10k  = CL10k./CD10k;                          %-
+T_R10k    = W./CL_CD10k;                           %lb
+P_R10k    = T_R10k.*Vinf;                          %lb*m/s
+T_A10k    = TMaxSL.*(rho10k/rhoSL);                %lb
+P_A10k    = T_A10k.*Vinf;                          %lb*m/s
+dP10k     = P_A10k-P_R10k;
+MaxdP10k  = max(dP10k);
+MaxROC10k = MaxdP10k/W                             %Max Rate of Climb
+
+figure(3)
+plot(Vinf,T_R10k,'*-',Vinf,T_A10k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Thrust (lbs)')
+title('Velocity Vs. Thrust ---- 5000 to 10000 feet')
+legend('Thrust Required','Thrust Available')
+axis([ 0 800 0 2.5E4 ])
+figure(4)
+plot(Vinf,P_R10k,'*-',Vinf,P_A10k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Power (lb*m/s)')
+title('Velocity Vs. Power ---- 5000 to 10000 feet')
+legend('Power Required','Power Available')
+
+hG15k     = linspace(10000,15000,50);              %ft
+T15k      = TSL + a.*(hG15k);                      %Rankine
+p15k      = pSL.*exp((-g./(R.*T15k)).*(hG15k));    %lbs/ft^2 
+rho15k    = p15k./(R.*T15k);                       %slug/ft^3
+CL15k     = W./(0.5.*rho15k.*Vinf.^2.*S);          %- 
+CD15k     = CD0 + CL15k.^2./(pi*e*AR);             %-
+CL_CD15k  = CL15k./CD15k;                          %-
+T_R15k    = W./CL_CD15k;                           %lb
+P_R15k    = T_R15k.*Vinf;                          %lb*m/s
+T_A15k    = TMaxSL.*(rho15k/rhoSL);                %lb
+P_A15k    = T_A15k.*Vinf;                          %lb*m/s
+dP15k     = P_A15k-P_R15k;
+MaxdP15k  = max(dP15k);
+MaxROC15k = MaxdP15k/W                             %Max Rate of Climb
+
+figure(5)
+plot(Vinf,T_R15k,'*-',Vinf,T_A15k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Thrust (lbs)')
+title('Velocity Vs. Thrust ---- 10000 to 15000 feet')
+legend('Thrust Required','Thrust Available')
+axis([ 0 800 0 2.5E4 ])
+figure(6)
+plot(Vinf,P_R15k,'*-',Vinf,P_A15k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Power (lb*m/s)')
+title('Velocity Vs. Power ---- 10000 to 15000 feet')
+legend('Power Required','Power Available')
+
+hG20k     = linspace(15000,20000,50);              %ft
+T20k      = TSL + a.*(hG20k);                      %Rankine
+p20k      = pSL.*exp((-g./(R.*T20k)).*(hG20k));    %lbs/ft^2 
+rho20k    = p20k./(R.*T20k);                       %slug/ft^3
+CL20k     = W./(0.5.*rho20k.*Vinf.^2.*S);          %- 
+CD20k     = CD0 + CL20k.^2./(pi*e*AR);             %-
+CL_CD20k  = CL20k./CD20k;                          %-
+T_R20k    = W./CL_CD20k;                           %lb
+P_R20k    = T_R20k.*Vinf;                          %lb*m/s
+T_A20k    = TMaxSL.*(rho20k/rhoSL);                %lb
+P_A20k    = T_A20k.*Vinf;                          %lb*m/s
+dP20k     = P_A20k-P_R20k;
+MaxdP20k  = max(dP20k);
+MaxROC20k = MaxdP20k/W                             %Max Rate of Climb
+
+figure(7)
+hold on
+plot(Vinf,T_R20k,'*-',Vinf,T_A20k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Thrust (lbs)')
+title('Velocity Vs. Thrust ---- 15000 to 20000 feet')
+legend('Thrust Required','Thrust Available')
+axis([ 0 800 0 2.5E4 ])
+figure(8)
+hold on
+plot(Vinf,P_R20k,'*-',Vinf,P_A20k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Power (lb*m/s)')
+title('Velocity Vs. Power ---- 15000 to 20000 feet')
+legend('Thrust Required','Thrust Available')
+
+hG20konly     = linspace(20000,20000,50);                   %ft
+T20konly      = TSL + a.*(hG20konly);                       %Rankine
+p20konly      = pSL.*exp((-g./(R.*T20konly)).*(hG20konly)); %lbs/ft^2 
+rho20konly    = p20konly./(R.*T20konly);                    %slug/ft^3
+CL20konly     = W./(0.5.*rho20konly.*Vinf.^2.*S);           %- 
+CD20konly     = CD0 + CL20konly.^2./(pi*e*AR);              %-
+CL_CD20konly  = CL20konly./CD20konly;                       %-
+T_R20konly    = W./CL_CD20konly;                            %lb
+P_R20konly    = T_R20konly.*Vinf;                           %lb*m/s
+T_A20konly    = TMaxSL.*(rho20konly/rhoSL);                 %lb
+P_A20konly    = T_A20konly.*Vinf;                           %lb*m/s
+dP20konly     = P_A20konly-P_R20konly;
+MaxdP20konly  = max(dP20konly);
+MaxROC20konly = MaxdP20konly/W;                             %Max Rate of Climb
+p020konly     = p20konly + 0.5.*rho20konly.*Vinf.^2;        %Total Pressure 
+Vc20konly     = sqrt( ((2.*gamma.*p20konly)./(rho20konly.*(gamma-1))).*...
+              (((p020konly-p20konly)./p20konly+1).^((gamma-1)./gamma)-1)); %True Airspeed (ft/s)
+Vi20konly     = Vc20konly - dVp;                            %Indicated Airspeed (ft/s)
+VMax20konly   = 667                                         %Max V from curve (ft/s)
+ViMax20konly  = max(Vi20konly)                              %Max Vi (ft/s)
+
+figure(700)
+hold on
+plot(Vinf,T_R20konly,'*-',Vinf,T_A20konly,'^-')
+plot(667.2187,4540.955,'ro','markersize',18)
+xlabel('Velocity (ft/s)')
+ylabel('Thrust (lbs)')
+title('Velocity Vs. Thrust ---- 20000 feet only')
+legend('Thrust Required','Thrust Available','Max Velocity = 667ft/s')
+axis([ 0 800 0 2.5E4 ])
+figure(800)
+hold on
+plot(Vinf,P_R20konly,'*-',Vinf,P_A20konly,'^-')
+plot(667.133,3.0294E6,'ro','markersize',18)
+xlabel('Velocity (ft/s)')
+ylabel('Power (lb*m/s)')
+title('Velocity Vs. Power ---- 20000 feet only')
+legend('Thrust Required','Thrust Available','Max Velocity = 667ft/s')
+
+hG25k     = linspace(20000,25000,50);              %ft
+T25k      = TSL + a.*(hG25k);                      %Rankine
+p25k      = pSL.*exp((-g./(R.*T25k)).*(hG25k));    %lbs/ft^2 
+rho25k    = p25k./(R.*T25k);                       %slug/ft^3
+CL25k     = W./(0.5.*rho25k.*Vinf.^2.*S);          %- 
+CD25k     = CD0 + CL25k.^2./(pi*e*AR);             %-
+CL_CD25k  = CL25k./CD25k;                          %-
+T_R25k    = W./CL_CD25k;                           %lb
+P_R25k    = T_R25k.*Vinf;                          %lb*m/s
+T_A25k    = TMaxSL.*(rho25k/rhoSL);                %lb
+P_A25k    = T_A25k.*Vinf;                          %lb*m/s
+dP25k     = P_A25k-P_R25k;
+MaxdP25k  = max(dP25k);
+MaxROC25k = MaxdP25k/W                             %Max Rate of Climb
+
+figure(9)
+hold on
+plot(Vinf,T_R25k,'*-',Vinf,T_A25k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Thrust (lbs)')
+title('Velocity Vs. Thrust ---- 20000 to 25000 feet')
+legend('Thrust Required','Thrust Available')
+axis([ 0 800 0 2.5E4 ])
+figure(10)
+hold on
+plot(Vinf,P_R25k,'*-',Vinf,P_A25k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Power (lb*m/s)')
+title('Velocity Vs. Power ---- 20000 to 25000 feet')
+legend('Power Required','Power Available')
+
+hG30k     = linspace(25000,30000,50);              %ft
+T30k      = TSL + a.*(hG30k);                      %Rankine
+p30k      = pSL.*exp((-g./(R.*T30k)).*(hG30k));    %lbs/ft^2 
+rho30k    = p30k./(R.*T30k);                       %slug/ft^3
+CL30k     = W./(0.5.*rho30k.*Vinf.^2.*S);          %- 
+CD30k     = CD0 + CL30k.^2./(pi*e*AR);             %-
+CL_CD30k  = CL30k./CD30k;                          %-
+T_R30k    = W./CL_CD30k;                           %lb
+P_R30k    = T_R30k.*Vinf;                          %lb*m/s
+T_A30k    = TMaxSL.*(rho30k/rhoSL);                %lb
+P_A30k    = T_A30k.*Vinf;                          %lb*m/s
+dP30k     = P_A30k-P_R30k;
+MaxdP30k  = max(dP30k);
+MaxROC30k = MaxdP30k/W                             %Max Rate of Climb
+
+figure(11)
+plot(Vinf,T_R30k,'*-',Vinf,T_A30k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Thrust (lbs)')
+title('Velocity Vs. Thrust ---- 25000 to 30000 feet')
+legend('Thrust Required','Thrust Available')
+axis([ 0 800 0 2.5E4 ])
+figure(12)
+plot(Vinf,P_R30k,'*-',Vinf,P_A30k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Power (lb*m/s)')
+title('Velocity Vs. Power ---- 25000 to 30000 feet')
+legend('Power Required','Power Available')
+
+hG35k     = linspace(30000,35000,50);              %ft
+T35k      = TSL + a.*(hG35k);                      %Rankine
+p35k      = pSL.*exp((-g./(R.*T35k)).*(hG35k));    %lbs/ft^2 
+rho35k    = p35k./(R.*T35k);                       %slug/ft^3
+CL35k     = W./(0.5.*rho35k.*Vinf.^2.*S);          %- 
+CD35k     = CD0 + CL35k.^2./(pi*e*AR);             %-
+CL_CD35k  = CL35k./CD35k;                          %-
+T_R35k    = W./CL_CD35k;                           %lb
+P_R35k    = T_R35k.*Vinf;                          %lb*m/s
+T_A35k    = TMaxSL.*(rho35k/rhoSL);                %lb
+P_A35k    = T_A35k.*Vinf;                          %lb*m/s
+dP35k     = P_A35k-P_R35k;
+MaxdP35k  = max(dP35k);
+MaxROC35k = MaxdP35k/W                             %Max Rate of Climb
+
+figure(13)
+plot(Vinf,T_R35k,'*-',Vinf,T_A35k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Thrust (lbs)')
+title('Velocity Vs. Thrust ---- 30000 to 35000 feet')
+legend('Thrust Required','Thrust Available')
+axis([ 0 800 0 2.5E4 ])
+figure(14)
+plot(Vinf,P_R35k,'*-',Vinf,P_A35k,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Power (lb*m/s)')
+title('Velocity Vs. Power ---- 30000 to 35000 feet')
+legend('Power Required','Power Available')
+
+%% Service and Absolute Ceilings
+hGser     = linspace(35968,35968,50);              %ft
+Tser      = TSL + a.*(hGser);                      %Rankine
+pser      = pSL.*exp((-g./(R.*Tser)).*(hGser));    %lbs/ft^2 
+rhoser    = pser./(R.*Tser);                       %slug/ft^3
+CLser     = W./(0.5.*rhoser.*Vinf.^2.*S);          %- 
+CDser     = CD0 + CLser.^2./(pi*e*AR);             %-
+CL_CDser  = CLser./CDser;                          %-
+T_Rser    = W./CL_CDser;                           %lb
+P_Rser    = T_Rser.*Vinf;                          %lb*m/s
+T_Aser    = TMaxSL.*(rhoser/rhoSL);                %lb
+P_Aser    = T_Aser.*Vinf;                          %lb*m/s
+dPser     = P_Aser-P_Rser;
+MaxdPser  = max(dPser);
+MaxROCser = MaxdPser/W                             %Max Rate of Climb
+
+figure(999)
+plot(Vinf,T_Rser,'*-',Vinf,T_Aser,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Thrust (lbs)')
+title('Velocity Vs. Thrust ---- Service Ceiling at 35968 feet')
+legend('Thrust Required','Thrust Available')
+axis([ 0 800 0 2.5E4 ])
+figure(1000)
+plot(Vinf,P_Rser,'*-',Vinf,P_Aser,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Power (lb*m/s)')
+title('Velocity Vs. Power ---- Service Ceiling at 35968 feet')
+legend('Power Required','Power Available')
+
+hGabs     = linspace(36658,36658,50);              %ft
+Tabs      = TSL + a.*(hGabs);                      %Rankine
+pabs      = pSL.*exp((-g./(R.*Tabs)).*(hGabs));    %lbs/ft^2 
+rhoabs    = pabs./(R.*Tabs);                       %slug/ft^3
+CLabs     = W./(0.5.*rhoabs.*Vinf.^2.*S);          %- 
+CDabs     = CD0 + CLabs.^2./(pi*e*AR);             %-
+CL_CDabs  = CLabs./CDabs;                          %-
+T_Rabs    = W./CL_CDabs;                           %lb
+P_Rabs    = T_Rabs.*Vinf;                          %lb*m/s
+T_Aabs    = TMaxSL.*(rhoabs/rhoSL);                %lb
+P_Aabs    = T_Aabs.*Vinf;                          %lb*m/s
+dPabs     = P_Aabs-P_Rabs;
+MaxdPabs  = max(dPabs);
+MaxROCabs = MaxdPabs/W                             %Max Rate of Climb
+
+figure(9999)
+plot(Vinf,T_Rabs,'*-',Vinf,T_Aabs,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Thrust (lbs)')
+title('Velocity Vs. Thrust ---- Absolute Ceiling at 36658 feet')
+legend('Thrust Required','Thrust Available')
+axis([ 0 800 0 2.5E4 ])
+figure(10000)
+plot(Vinf,P_Rabs,'*-',Vinf,P_Aabs,'^-')
+xlabel('Velocity (ft/s)')
+ylabel('Power (lb*m/s)')
+title('Velocity Vs. Power ---- Absolute Ceiling at 36658 feet')
+legend('Power Required','Power Available')
+
+
+
