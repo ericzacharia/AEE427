@@ -1,15 +1,12 @@
-%Amanda Walkowicz, Ben Heyman, Eric Zacharia, Aaron Peters
-%Professor Green
 %AEE 427
-%Lab 1
+%Lab 1 Straight Level Unaccelerated Flight
 close all
 clear all
 clc
 TopRight = [880   385   560   420];
 set(0, 'DefaultFigurePosition', TopRight)
-%%
-%Data for lab 1%
 
+%Data for lab 1%
 a=load('Datalab1.txt');
 %VData Variables from Lab%
 
@@ -27,7 +24,7 @@ vtotk   = a(:,12);       %Total Velocity (knots)
 vtotm   = a(:,13);       %Total Velocity (mph)
 atmp    = a(:,14);       %Atmospheric pressure (HG)
 atmtemp = a(:,15);       %Atmospheric temperature (celcius)
-density = a(:,16);       %Density
+rho     = a(:,16);       %Density
 Q       = a(:,17);       %pounds per square foot
 A       = a(:,18);
 altsl   = a(:,24);       %Altitude at sealevel
@@ -38,18 +35,148 @@ thrust  = a(:,30);       %Thrust (lbs)
 ew      = 1340;          %Empty weight (lbs)
 pw      = 421;           %Payload weight (lbs)
 fw      = 257;           %fuel weight (lbs)
-tw      = ew+pw+fw;      %Total weight (lbs)
+W       = ew+pw+fw;      %Total weight (lbs)
 
 %%
-figure(1)
-plot(vtotm(1000:7000),thrust(1000:7000))
+vtotmavg  = [63.68 84.62 103.8 120.7 137.9 150.9 160.2];
+thrustavg = [173.2 125,172.7,205.5,256,304.1,341.9];
 
-velocity = [84.62,103.8,120.7,137.9,150.9,160.2]
-thrust   = [125,172.7,205.5,256,304.1,341.9]
+figure(1)
+plot(vtotm(1000:7000),thrust(1000:7000),vtotmavg,thrustavg,'^-')
+xlabel('Total Velocity (mph)')
+ylabel('Thrust (lbs)')
+title('Total Velocity vs Thrust at 3500 feet')
+legend('All Data','Averaged Data','Location', 'NorthWest')
+
+vtrumavg  = [63.98 84.66 103.9 120.9 137.9 151 160.4 ];
 
 figure(2)
-plot(velocity,thrust)
+plot(vtrum(1000:7000),thrust(1000:7000),vtrumavg,thrustavg,'*-')
+xlabel('True Velocity (mph)')
+ylabel('Thrust (lbs)')
+title('True Velocity vs Thrust ')
+legend('All Data','Averaged Data','Location', 'NorthWest')
+
+vindmavg = [60.06 81.16 99.59 115.8 132.3 144.7 153.6];
+
+figure(3)
+plot(vindm(1000:7000),thrust(1000:7000),vindmavg,thrustavg,'o-')
+xlabel('Indicated Velocity (mph)')
+ylabel('Thrust (lbs)')
+title('Indicated Velocity vs Thrust at 3500 feet')
+legend('All Data','Averaged Data','Location', 'NorthWest')
+
+figure(4)
+plot(vtotmavg,thrustavg,'^-',vtrumavg,thrustavg,'*-',vindmavg,thrustavg,'o-')
+xlabel('Velocity (mph)')
+ylabel('Thrust (lbs)')
+title('All Averaged Velocity vs Thrust at 3500 feet')
+legend('Total','True','Indicated','Location', 'NorthWest')
+
+%% CL max, L/D max, Treq(min), At 3,500 feet
+
+L           = W;               %(lbs) L = W in SLUF
+Treq        = min(thrustavg)   %(lbs)
+D           = Treq;            %(lbs)
+S           = 174;             %(ft^2) Wing Area
+L_D_Max     = L/D              %-
+
+vtotm_Stall = min(vtotmavg)*5280/3600; %mph -> ft/s
+vtrum_Stall = min(vtrumavg)*5280/3600; %mph -> ft/s
+vindm_Stall = min(vindmavg)*5280/3600; %mph -> ft/s
+
+CLtotm      = 2.*W./(2.1429E-3.*vtotm_Stall.^2.*S);
+CLtotm_Max  = max(CLtotm)
+CLtrum      = 2.*W./(2.1429E-3.*vtrum_Stall.^2.*S);
+CLtrum_Max  = max(CLtrum)
+CLindmt     = 2.*W./(2.1429E-3.*vindm_Stall.^2.*S);
+CLindmt_Max = max(CLindmt)
 
 
-%mention induced vs parasitic drag
-%in discussing talk about results do not ramble about airplane
+%% Altitude at 5k feet
+vtotmavg2  = [66.63 96.23 112.6 131.3 145.7 156.3];
+thrustavg2 = [180.1 155.9 170.1 223.2 266.4 309.1];
+
+figure(5)
+plot(vtotm(10300:16000),thrust(10300:16000),vtotmavg2,thrustavg2,'^-')
+xlabel('Total Velocity (mph)')
+ylabel('Thrust (lbs)')
+title('Total Velocity vs Thrust at 5000 feet')
+legend('All Data','Averaged Data','Location', 'NorthWest')
+xlim([40 180])
+
+vtrumavg2  = [67.01 96.37 112.8 130.9 145.7 156.6];
+
+figure(6)
+plot(vtrum(10300:16000),thrust(10300:16000),vtrumavg2,thrustavg2,'*-')
+xlabel('True Velocity (mph)')
+ylabel('Thrust (lbs)')
+title('True Velocity vs Thrust at 5000 feet')
+legend('All Data','Averaged Data','Location', 'NorthWest')
+xlim([40 180])
+
+vindmavg2 = [60.51 89.58 104.7 122.1 135.6 145.5];
+
+figure(7)
+plot(vindm(10300:16000),thrust(10300:16000),vindmavg2,thrustavg2,'o-')
+xlabel('Indicated Velocity (mph)')
+ylabel('Thrust (lbs)')
+title('Indicated Velocity vs Thrust at 5000 feet')
+legend('All Data','Averaged Data','Location', 'NorthWest')
+xlim([40 180])
+
+figure(8)
+plot(vtotmavg2,thrustavg2,'^-',vtrumavg2,thrustavg2,'*-',vindmavg2,thrustavg2,'o-')
+xlabel('Velocity (mph)')
+ylabel('Thrust (lbs)')
+title('All Averaged Velocity vs Thrust at 5000 feet')
+legend('Total','True','Indicated','Location', 'NorthWest')
+
+xlim([40 180])
+
+%% CL max, L/D max, Treq(min), At 5000 feet
+
+L            = W;               %(lbs) L = W in SLUF
+Treq2        = min(thrustavg2)  %(lbs)
+D            = Treq2;           %(lbs)
+S            = 174;             %(ft^2) Wing Area
+L_D_Max      = L/D              %-
+
+vtotm_Stall2 = min(vtotmavg2)*5280/3600; %mph -> ft/s
+vtrum_Stall2 = min(vtrumavg2)*5280/3600; %mph -> ft/s
+vindm_Stall2 = min(vindmavg2)*5280/3600; %mph -> ft/s
+
+CLtotm2      = 2.*W./(2.0482E-3.*vtotm_Stall2.^2.*S);
+CLtotm_Max2  = max(CLtotm2)
+CLtrum2      = 2.*W./(2.0482E-3.*vtrum_Stall2.^2.*S);
+CLtrum_Max2  = max(CLtrum2)
+CLindmt2     = 2.*W./(2.0482E-3.*vindm_Stall2.^2.*S);
+CLindmt_Max2 = max(CLindmt2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
