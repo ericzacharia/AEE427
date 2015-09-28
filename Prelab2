@@ -1,0 +1,84 @@
+%Eric Zacharia
+%AEE427 - Pre-Lab 2
+%Due September 28, 2015
+clear all
+close all
+clc
+
+%% Pertinent Equations
+W            = 2000;                                            %lbs
+rho          = 0.002377;                                        %slug/ft^3 
+S            = 174;                                             %ft^2
+CD0          = 0.0341;                                          %Zero lift drag coefficient
+e            = 0.77;                                            %Oswald efficiency factor
+AR           = 7.52;                                            %Aspect Ratio
+b            = 35.83;                                           %ft Wing span
+g            = 32.2;                                            %Gravitational Constant
+h_wing       = 6;                                               %ft height of wing off ground
+CLMaxFlaps   = 2.1;                                             %CL Max at 40% Flaps
+CLMaxNoFlaps = 1.6;                                             %CL Max at  0% Flaps
+phi          = ((16*h_wing/b)^2)/(1+((16*h_wing/b)^2));         %Ground effect multiplier
+
+%40 degree flaps
+VLOFlaps     = (0.7*1.2*sqrt((2*W)/(rho*S*CLMaxFlaps)));           %ft/s
+VLFlaps      = (0.7*1.3*sqrt((2*W)/(rho*S*CLMaxFlaps)));           %ft/s
+L_LO_Flaps   = (0.5.*CLMaxFlaps.*rho.*S.*VLOFlaps.^2);             %lbs Lift Lift Off
+L_L_Flaps    = (0.5.*CLMaxFlaps.*rho.*S.*VLFlaps.^2);              %lbs Lift Landing
+D_LO_Flaps   = (0.5.*rho.*S.*VLOFlaps.^2*(CD0+phi*(CLMaxFlaps.^2./(pi*e*AR)))); %lbs Drag
+D_L_Flaps    = (0.5.*rho.*S.*VLFlaps.^2*(CD0+phi*(CLMaxFlaps.^2./(pi*e*AR))));  %lbs Drag
+CD_Flaps     = (CD0 + CLMaxFlaps.^2./(pi*e*AR));                   %Drag Coefficient
+CL_CD_Flaps  = CLMaxFlaps./CD_Flaps;                               %L/D ratio
+T_Flaps      = (W./CL_CD_Flaps);                                   %Thrust Required
+
+%0 degree flaps
+VLONoFlaps     = (0.7*1.2*sqrt((2*W)/(rho*S*CLMaxNoFlaps)));           %ft/s
+VLNoFlaps      = (0.7*1.3*sqrt((2*W)/(rho*S*CLMaxNoFlaps)));           %ft/s
+L_LO_NoFlaps   = (0.5.*CLMaxNoFlaps.*rho.*S.*VLONoFlaps.^2);           %lbs Lift Lift Off
+L_L_NoFlaps    = (0.5.*CLMaxNoFlaps.*rho.*S.*VLNoFlaps.^2);            %lbs Lift Landing
+D_LO_NoFlaps   = (0.5.*rho.*S.*VLONoFlaps.^2*(CD0+phi*(CLMaxNoFlaps.^2./(pi*e*AR)))); %lbs Drag
+D_L_NoFlaps    = (0.5.*rho.*S.*VLNoFlaps.^2*(CD0+phi*(CLMaxNoFlaps.^2./(pi*e*AR))));  %lbs Drag
+CD_NoFlaps     = (CD0 + CLMaxNoFlaps.^2./(pi*e*AR));                   %Drag Coefficient
+CL_CD_NoFlaps  = (CLMaxNoFlaps./CD_NoFlaps);                           %L/D ratio
+T_NoFlaps      = (W./CL_CD_NoFlaps);                                   %Thrust Required
+
+%Rolling Resistances
+mu_r_DryAsphaltNoBraking = 0.04; %1
+mu_r_DryAsphaltBraking   = 0.4;  %1                                 
+mu_r_WetAsphaltNoBraking = 0.05; %2 
+mu_r_WetAsphaltBraking   = 0.225;%2  
+mu_r_IcyAsphaltNoBraking = 0.02; %3
+mu_r_IcyAsphaltBraking   = 0.08; %3                                        
+mu_r_HardTurfNoBraking    = 0.05; %4  
+mu_r_HardTurfBraking      = 0.4;  %4                                       
+mu_r_SoftTurfNoBraking    = 0.07; %5
+mu_r_SoftTurfBraking      = 0.2;  %5 
+mu_r_WetGrassNoBraking    = 0.08; %6 
+mu_r_WetGrassBraking      = 0.2;  %6 
+
+%% Ground Roll at CLMax with 40% Flaps
+S_LO_Flaps1       = (1.44*W^2)/(g*rho*S*CLMaxFlaps*(T_Flaps-(D_LO_Flaps+mu_r_DryAsphaltNoBraking*(W-L_LO_Flaps)))) %Lift Off Ground Roll
+S_L_Flaps1        = (1.69*W^2)/(g*rho*S*CLMaxFlaps*((D_L_Flaps+mu_r_DryAsphaltBraking*(W-L_L_Flaps))))   %Landing Ground Roll
+S_LO_Flaps2       = (1.44*W^2)/(g*rho*S*CLMaxFlaps*(T_Flaps-(D_LO_Flaps+mu_r_WetAsphaltNoBraking*(W-L_LO_Flaps)))) %Lift Off Ground Roll
+S_L_Flaps2        = (1.69*W^2)/(g*rho*S*CLMaxFlaps*((D_L_Flaps+mu_r_WetAsphaltBraking*(W-L_L_Flaps))))   %Landing Ground Roll
+S_LO_Flaps3       = (1.44*W^2)/(g*rho*S*CLMaxFlaps*(T_Flaps-(D_LO_Flaps+mu_r_IcyAsphaltNoBraking*(W-L_LO_Flaps)))) %Lift Off Ground Roll
+S_L_Flaps3        = (1.69*W^2)/(g*rho*S*CLMaxFlaps*((D_L_Flaps+mu_r_IcyAsphaltBraking*(W-L_L_Flaps))))   %Landing Ground Roll
+S_LO_Flaps4       = (1.44*W^2)/(g*rho*S*CLMaxFlaps*(T_Flaps-(D_LO_Flaps+mu_r_HardTurfNoBraking*(W-L_LO_Flaps))))    %Lift Off Ground Roll
+S_L_Flaps4        = (1.69*W^2)/(g*rho*S*CLMaxFlaps*((D_L_Flaps+mu_r_HardTurfBraking*(W-L_L_Flaps))))      %Landing Ground Roll
+S_LO_Flaps5       = (1.44*W^2)/(g*rho*S*CLMaxFlaps*(T_Flaps-(D_LO_Flaps+mu_r_SoftTurfNoBraking*(W-L_LO_Flaps))))    %Lift Off Ground Roll
+S_L_Flaps5        = (1.69*W^2)/(g*rho*S*CLMaxFlaps*((D_L_Flaps+mu_r_SoftTurfBraking*(W-L_L_Flaps))))      %Landing Ground Roll
+S_LO_Flaps6       = (1.44*W^2)/(g*rho*S*CLMaxFlaps*(T_Flaps-(D_LO_Flaps+mu_r_WetGrassNoBraking*(W-L_LO_Flaps))))    %Lift Off Ground Roll
+S_L_Flaps6        = (1.69*W^2)/(g*rho*S*CLMaxFlaps*((D_L_Flaps+mu_r_WetGrassBraking*(W-L_L_Flaps))))      %Landing Ground Roll
+
+%% Ground Roll at CLMax with 0% Flaps
+S_LO_NoFlaps1       = (1.44*W^2)/(g*rho*S*CLMaxNoFlaps*(T_NoFlaps-(D_LO_NoFlaps+mu_r_DryAsphaltNoBraking*(W-L_LO_NoFlaps)))) %Lift Off Ground Roll
+S_L_NoFlaps1        = (1.69*W^2)/(g*rho*S*CLMaxNoFlaps*((D_L_NoFlaps+mu_r_DryAsphaltBraking*(W-L_L_NoFlaps))))   %Landing Ground Roll
+S_LO_NoFlaps2       = (1.44*W^2)/(g*rho*S*CLMaxNoFlaps*(T_NoFlaps-(D_LO_NoFlaps+mu_r_WetAsphaltNoBraking*(W-L_LO_NoFlaps)))) %Lift Off Ground Roll
+S_L_NoFlaps2        = (1.69*W^2)/(g*rho*S*CLMaxNoFlaps*((D_L_NoFlaps+mu_r_WetAsphaltBraking*(W-L_L_NoFlaps))))   %Landing Ground Roll
+S_LO_NoFlaps3       = (1.44*W^2)/(g*rho*S*CLMaxNoFlaps*(T_NoFlaps-(D_LO_NoFlaps+mu_r_IcyAsphaltNoBraking*(W-L_LO_NoFlaps)))) %Lift Off Ground Roll
+S_L_NoFlaps3        = (1.69*W^2)/(g*rho*S*CLMaxNoFlaps*((D_L_NoFlaps+mu_r_IcyAsphaltBraking*(W-L_L_NoFlaps))))   %Landing Ground Roll
+S_LO_NoFlaps4       = (1.44*W^2)/(g*rho*S*CLMaxNoFlaps*(T_NoFlaps-(D_LO_NoFlaps+mu_r_HardTurfNoBraking*(W-L_LO_NoFlaps))))    %Lift Off Ground Roll
+S_L_NoFlaps4        = (1.69*W^2)/(g*rho*S*CLMaxNoFlaps*((D_L_NoFlaps+mu_r_HardTurfBraking*(W-L_L_NoFlaps))))      %Landing Ground Roll
+S_LO_NoFlaps5       = (1.44*W^2)/(g*rho*S*CLMaxNoFlaps*(T_NoFlaps-(D_LO_NoFlaps+mu_r_SoftTurfNoBraking*(W-L_LO_NoFlaps))))    %Lift Off Ground Roll
+S_L_NoFlaps5        = (1.69*W^2)/(g*rho*S*CLMaxNoFlaps*((D_L_NoFlaps+mu_r_SoftTurfBraking*(W-L_L_NoFlaps))))      %Landing Ground Roll
+S_LO_NoFlaps6       = (1.44*W^2)/(g*rho*S*CLMaxNoFlaps*(T_NoFlaps-(D_LO_NoFlaps+mu_r_WetGrassNoBraking*(W-L_LO_NoFlaps))))    %Lift Off Ground Roll
+S_L_NoFlaps6        = (1.69*W^2)/(g*rho*S*CLMaxNoFlaps*((D_L_NoFlaps+mu_r_WetGrassBraking*(W-L_L_NoFlaps))))      %Landing Ground Roll
