@@ -1,0 +1,171 @@
+% Eric Zacharia
+% Aircraft Performance and Dynamics - Homework 6 and 7
+% Due December 9th, 2015
+
+clear all
+close all
+clc 
+
+W      = 17578;                     % lbs
+g      = 32.2;                      % ft/s^2
+m      = W/g;                       % slugs
+c      = 10.8;                      % ft
+b      = 27.5;                      % ft
+S      = 260;                       % ft^2
+xCG    = 0.25*c;                    % ft
+Ix     = 8090;                      % Slugft^2
+Iy     = 25900;                     % Slugft^2
+Iz     = 29200;                     % Slugft^2
+Ixz    = 1300;                      % Slugft^2
+rho    = 0.002377;                  % Slugs/ft^3
+Mach   = 0.4;                       % - 
+R      = 1716;                      % IDK
+T      = 518.69;                    % Rankine
+a      = sqrt(1.4*R*T);             % ft/s
+u0     = Mach*a;                    % ft/s
+Q      = 1/2*rho*u0^2;              % lb/ft^2 
+theta0 = 0;                         % (Start alligned with fixed frame)
+
+% Tabulated Longitudinal Coefficients M = 0.4 at Sea Level 
+CL     = 0.28;                      % -
+CD     = 0.03;                      % - 
+CLa    = 3.45;                      % 1/rad
+CDa    = 0.30;                      % 1/rad
+Cma    = -.38;                      % 1/rad
+CLadot = 0.72;                      % 1/rad
+Cmadot = -1.1;                      % 1/rad
+CLq    = 0.00;                      % 1/rad
+Cmq    = -3.6;                      % 1/rad
+CLM    = 0.00;                      % 1/rad
+CDM    = 0.00;                      % 1/rad
+CmM    = 0.00;                      % 1/rad
+CLde   = 0.36;                      % 1/rad
+Cmde   = -.50;                      % 1/rad  
+
+% Assumed Longitudinal Coefficients
+CDu    = 0.00;                      % 1/rad
+CD0    = 0.05;                      % 1/rad
+CLu    = 0.00;                      % 1/rad
+CL0    = 0.41;                      % 1/rad
+Cmu    = 0.00;                      % 1/rad
+Czde   = -CLde;                     % 1/rad         
+Czadot = -2.62;                     % 1/rad
+
+% Longitudinal Derivatives
+Xu     = -((CDu+2*CD0)*Q*S)/(m*u0); % 1/s
+Xw     = -((CDa-CL0)*Q*S)/(m*u0);   % 1/s
+Zu     = -((CLu+2*CL0)*Q*S)/(m*u0); % 1/s
+Zw     = -((CLa+CD0)*Q*S)/(m*u0);   % 1/s
+Za     = u0*Zw;                     % ft/s^2
+Zde    = Czde*Q*S/m;                % ft/s^2
+Mu     = Cmu*(Q*S*c)/(m*Iy);        % 1/fts
+Mw     = Cma*(Q*S*c)/(m*Iy);        % 1/fts
+Ma     = u0*Mw;                     % 1/s^2
+Mwdot  = Cmadot*(c/(2*u0))*...  
+         (Q*S*c)/(u0*Iy);           % 1/ft
+Madot  = u0*Mwdot;                  % 1/s
+Mq     = Cmq*c/(2*u0)*... 
+         (Q*S*c)/Iy;                % 1/ft
+Mde    = Cmde*(Q*S*c)/Iy;           % 1/ft
+Xde    = 0;                         % (free response)
+XdT    = 0;                         % (free response)
+ZdT    = 0;                         % (free response)
+MdT    = 0;                         % (free response)
+
+% Free Response for Full Longitudinal System
+A      = [Xu Xw 0 -g*cos(theta0) ; ...
+          Zu Zw u0 -g*sin(theta0) ; ...
+          Mu+Mwdot*Zw Mw+Mwdot*Zw Mq+Mwdot*u0 -Mwdot*g*sin(theta0) ; 0 0 1 0];
+B      = [Xde ; Zde ; Mde+Mwdot*Zde ; 0]
+C      = [1 0 0 0 ; 0 1 0 0 ; 0 0 0 1];
+D      = [0 ; 0 ; 0];
+theta  = [1 ; 1 ; 1 ; 1]*5*pi/180;  % Radians
+
+EigA   = eig(A)
+pillow = ss(A,B,C,D);
+[Y,T]  = initial(pillow,theta,400);
+figure(1)
+subplot(3,1,1)
+plot(T,Y(:,1),'g')
+figure(1)
+subplot(3,1,2)
+plot(T,Y(:,2),'c')
+figure(1)
+subplot(3,1,3)
+plot(T,Y(:,3),'b')
+
+% Eigenvalues of Phugoid Motion Approximation
+Ap     = [Xu -g ; -Zu/u0 0];
+EigAp  = eig(Ap)
+
+% Eigenvalues of Short Period Motion Approximation
+As     = [Za/u0 1 ; Ma + Madot*Za/u0 Mq+Madot];
+EigAs  = eig(As)
+
+% Tabulated Lateral Coefficients M = 0.4 at Sea Level
+CyB    = -.98;                      % 1/rad
+ClB    = -.12;                      % 1/rad
+CnB    = 0.25;                      % 1/rad
+Clp    = -.26;                      % 1/rad
+Cnp    = .022;                      % 1/rad
+Clr    = 0.14;                      % 1/rad
+Cnr    = -.35;                      % 1/rad
+Clda   = 0.08;                      % 1/rad
+Cnda   = 0.06;                      % 1/rad
+Cydr   = 0.17;                      % 1/rad
+Cldr   =-.105;                      % 1/rad
+Cndr   = .032;                      % 1/rad
+Cyp    = 0;                         % general aviation airplane
+Cyr    = 0;                         % general aviation airplane
+
+% Lateral Derivatives
+YB     = Q*S*CyB/m               ;  % ft/s^2
+Yp     = Q*S*b*Cyp/(2*m*u0)      ;  % ft/s
+Yr     = Q*S*b*Cyr/(2*m*u0)      ;  % ft/s
+Ydr    = Q*S*Cydr/m              ;  % ft/s^2
+Lv     = -0.091                  ;         % 1/fts
+Lp     = Q*S*b^2*Clp/(2*Ix*u0)   ;  % 1/s
+Lr     = Q*S*b^2*Clr/(2*Ix*u0)   ;  % 1/s
+Lda    = Q*S*b*Clda/Ix           ;  % 1/s^2
+Ldr    = Q*S*b*Cldr/Ix           ;  % 1/s^2
+Nv     = 0.025                   ;  % 1/fts
+Np     = Q*S*b^2*Cnp/(2*Iz*u0)   ;  % 1/s
+Nr     = Q*S*b^2*Cnr/(2*Iz*u0)   ;  % 1/s
+Nda    = Q*S*b*Cnda/Iz           ;  % 1/s^2
+Ndr    = Q*S*b*Cndr/Iz           ;  % 1/s^2
+
+% Free Response for Full Lateral System
+Lvstar = Lv /(1-(Ixz^2/(Ix*Iz)));    % 1/fts
+Lpstar = Lp /(1-(Ixz^2/(Ix*Iz)));    % 1/s
+Lrstar = Lr /(1-(Ixz^2/(Ix*Iz)));    % 1/s
+Ldastar= Lda/(1-(Ixz^2/(Ix*Iz)));    % 1/s^2
+Ldrstar= Ldr/(1-(Ixz^2/(Ix*Iz)));    % 1/s^2
+Nvstar = Nv /(1-(Ixz^2/(Ix*Iz)));    % 1/fts
+Npstar = Np /(1-(Ixz^2/(Ix*Iz)));    % 1/s
+Nrstar = Nr /(1-(Ixz^2/(Ix*Iz)));    % 1/s
+Ndastar= Nda/(1-(Ixz^2/(Ix*Iz)));    % 1/s^2
+Ndrstar= Ndr/(1-(Ixz^2/(Ix*Iz)));    % 1/s^2
+
+A2     = [YB/u0 Yp/u0 -(1-Yr/u0) g*cos(theta0)/u0  ; ...
+          Lvstar+Ixz/Ix*Nvstar Lpstar+Ixz/Ix*Npstar Lrstar+Ixz/Ix*Nrstar 0 ; ...
+          Nvstar+Ixz/Iz*Lvstar Npstar+Ixz/Iz*Lpstar Nrstar+Ixz/Iz*Lrstar 0 ; ... 
+          0 1 0 0];
+B2     = [0 Ydr ; Ldastar+Ixz/Ix*Ndastar Ldrstar+Ixz/Ix*Ndrstar ; Ndastar+Ixz/Iz*Ldastar Ndrstar+Ixz/Iz*Ldrstar ; 0 0];
+C2     = [1 0 0 0 ; 0 1 0 0 ; 0 0 0 1];
+D2     = [0 0 ; 0 0 ; 0 0];
+beta   = [1 ; 1 ; 1 ; 1]*3*pi/180;  % Radians
+EigA2  = eig(A2)
+pillows= ss(A2,B2,C2,D2);
+[Y2,T2]= initial(pillows,beta,400);
+figure(2)
+subplot(3,1,1)
+plot(T2,Y2(:,1),'g')
+figure(2)
+subplot(3,1,2)
+plot(T2,Y2(:,2),'c')
+figure(2)
+subplot(3,1,3)
+plot(T2,Y2(:,3),'b')
+
+
+
